@@ -28,7 +28,7 @@ set(SHADER_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/flow/shaders)
 file(GLOB_RECURSE SHADER_FILES ${SHADER_DIR}/*.frag ${SHADER_DIR}/*.vert)
 
 foreach(SHADER_FILE ${SHADER_FILES})
-    get_filename_component(FILE_NAME ${SHADER_FILE} NAME)
+    get_filename_component(FILE_NAME ${SHADER_FILE} NAME_WE)
     set(SHADER_OUTPUT_FILE ${SHADER_OUTPUT_DIR}/${FILE_NAME}.spv)
     file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
     add_custom_command(
