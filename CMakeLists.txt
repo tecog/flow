@@ -22,5 +22,23 @@ find_package(Vulkan REQUIRED)
 target_link_libraries(Flow Vulkan::Vulkan)
 target_link_libraries(Flow glfw ${GLFW_LIBRARIES})
 
-# TODO: figure out how to add a pre-build step to compile shaders
-#add_custom_command(TARGET Flow PRE_BUILD COMMAND source "${CMAKE_CURRENT_SOURCE_DIR}/flow/compile_shaders.sh") 
+#  add a pre-build step to compile shaders
+set(SHADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/flow/shaders)
+set(SHADER_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/flow/shaders)
+file(GLOB_RECURSE SHADER_FILES ${SHADER_DIR}/*.frag ${SHADER_DIR}/*.vert)
+
+foreach(SHADER_FILE ${SHADER_FILES})
+    get_filename_component(FILE_NAME ${SHADER_FILE} NAME)
+    set(SHADER_OUTPUT_FILE ${SHADER_OUTPUT_DIR}/${FILE_NAME}.spv)
+    file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
+    add_custom_command(
+        OUTPUT ${SHADER_OUTPUT_FILE}
+        DEPENDS ${SHADER_FILE}
+        COMMAND glslangValidator -V -o ${SHADER_OUTPUT_FILE} ${SHADER_FILE}  
+    )
+    message(STATUS "${SHADER_OUTPUT_FILE}")
+    list(APPEND SHADER_OUTPUT_FILES ${SHADER_OUTPUT_FILE})
+endforeach()
+
+add_custom_target(Shaders DEPENDS ${SHADER_OUTPUT_FILES})
+add_dependencies(Flow Shaders)
