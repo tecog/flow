@@ -1,30 +1,31 @@
-cmake_minimum_required (VERSION 2.6)
-project (Flow)
+cmake_minimum_required (VERSION 3.15)
+project (Flow VERSION 0.1 LANGUAGES CXX)
 
 # enable C++11
+set(CMAKE_CXX_STANDARD 14)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-add_definitions(-std=c++14)
+
+# 导出compile_commands.json文件
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG "_DEBUG")
+
+find_package(glfw3 REQUIRED)
+find_package(Vulkan REQUIRED)
 
 # include flow header and source files
 include_directories("${PROJECT_SOURCE_DIR}/flow")
 file(GLOB SOURCES "flow/*.cpp")
 
-# setup GLFW
-add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/glfw")
-include_directories("${PROJECT_SOURCE_DIR}/third_party/glfw/include/GLFW")
-
 # create the executable
 add_executable(Flow ${SOURCES})
 
 # add libraries (note that as of version 3.7, CMake supports Vulkan out-of-the-box)
-find_package(Vulkan REQUIRED)
-target_link_libraries(Flow Vulkan::Vulkan)
-target_link_libraries(Flow glfw ${GLFW_LIBRARIES})
+target_link_libraries(Flow glfw Vulkan::Vulkan)
 
-#  add a pre-build step to compile shaders
+# add a pre-build step to compile shaders
 set(SHADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/flow/shaders)
-set(SHADER_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/flow/shaders)
+set(SHADER_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/flow/shaders)
 file(GLOB_RECURSE SHADER_FILES ${SHADER_DIR}/*.frag ${SHADER_DIR}/*.vert)
 
 foreach(SHADER_FILE ${SHADER_FILES})

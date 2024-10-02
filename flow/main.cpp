@@ -13,7 +13,7 @@
 #include "vulkan/vulkan.hpp"
 
 #define NOMINMAX
-#include "glfw3.h"
+#include "GLFW/glfw3.h"
 
 #ifdef _DEBUG
 #define LOG_DEBUG(x) std::cout << x << "\n"
